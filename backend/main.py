@@ -1,9 +1,12 @@
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
-import oracledb
+# import oracledb  <- Comentado, ahora se maneja en database.py
 import asyncio
 from typing import List
+
+# Importar la función de conexión desde nuestro nuevo archivo
+from database import get_db_connection
 
 app = FastAPI()
 
@@ -16,10 +19,15 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Configuración estricta de conexión a Oracle XE
-DB_USER = "SYSTEM"
-DB_PASSWORD = "oracle123"
-DB_DSN = "localhost:1521/XEPDB1"
+# ==========================================================
+# CONFIGURACIÓN LOCAL ANTIGUA (Comentada por migración a la nube)
+# ==========================================================
+# DB_USER = "SYSTEM"
+# DB_PASSWORD = "oracle123"
+# DB_DSN = "localhost:1521/XEPDB1"
+# def get_db_connection():
+#     return oracledb.connect(user=DB_USER, password=DB_PASSWORD, dsn=DB_DSN)
+# ==========================================================
 
 # Modelos de datos esperados
 
@@ -32,10 +40,6 @@ class Pago(BaseModel):
     cedula: str
     monto: float
     tarjeta_oculta: str
-
-
-def get_db_connection():
-    return oracledb.connect(user=DB_USER, password=DB_PASSWORD, dsn=DB_DSN)
 
 
 @app.post("/api/consultar-deuda")
@@ -64,7 +68,6 @@ def consultar_deuda(consulta: Consulta):
                 for fila in filas:
                     id_planilla, mes, monto, _, id_medidor, direccion = fila
 
-                    # Si el medidor no existe en el diccionario, lo creamos
                     if id_medidor not in medidores_dict:
                         medidores_dict[id_medidor] = {
                             "id_medidor": id_medidor,
@@ -72,7 +75,6 @@ def consultar_deuda(consulta: Consulta):
                             "planillas": []
                         }
 
-                    # Agregamos la planilla al medidor correspondiente
                     medidores_dict[id_medidor]["planillas"].append({
                         "id_planilla": id_planilla,
                         "mes": mes,
@@ -91,7 +93,7 @@ def consultar_deuda(consulta: Consulta):
 
 class PagoParcial(BaseModel):
     cedula: str
-    ids_planillas: List[int]  # Lista de IDs de las planillas seleccionadas
+    ids_planillas: List[int]
     monto: float
     tarjeta_oculta: str
 
@@ -107,7 +109,6 @@ async def procesar_pago(pago: PagoParcial):
     try:
         with get_db_connection() as conn:
             with conn.cursor() as cursor:
-                # Genera los marcadores para la consulta dinámica SQL (:id0, :id1, etc.)
                 bind_names = [f":id{i}" for i in range(
                     len(pago.ids_planillas))]
                 sql_update = f"""
@@ -115,8 +116,6 @@ async def procesar_pago(pago: PagoParcial):
                     SET estado = 'PAGADA', fecha_pago = SYSDATE
                     WHERE id_planilla IN ({','.join(bind_names)})
                 """
-
-                # Crea el diccionario de parámetros
                 params = {f"id{i}": val for i,
                           val in enumerate(pago.ids_planillas)}
                 cursor.execute(sql_update, params)
