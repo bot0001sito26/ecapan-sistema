@@ -1,7 +1,7 @@
 import { useState } from 'react';
 
 
-const API_URL = 'https://ecapan-backend.onrender.com/api/consultar-deuda';
+const API_URL = 'https://ecapan-backend.onrender.com';
 
 export default function ConsultaPlanillas() {
     const [cedula, setCedula] = useState('');
