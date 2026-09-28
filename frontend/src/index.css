@@ -1,0 +1,19 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Montserrat:wght@600;700;800&display=swap');
+
+@import "tailwindcss";
+
+/* Fuerza la fuente Inter para textos y menús */
+body {
+    font-family: 'Inter', sans-serif;
+}
+
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+.font-heading {
+    font-family: 'Montserrat', sans-serif;
+}

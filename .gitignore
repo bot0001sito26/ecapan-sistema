@@ -1,0 +1,46 @@
+# =========================
+# SEGURIDAD Y CREDENCIALES
+# =========================
+.env
+.env.*
+*.pem
+*.key
+
+# Archivos de conexión de Oracle Cloud (¡CRÍTICO!)
+Wallet_*.zip
+cwallet.sso
+ewallet.p12
+keystore.jks
+truststore.jks
+sqlnet.ora
+tnsnames.ora
+
+# =========================
+# FRONTEND (React / Vite)
+# =========================
+node_modules/
+dist/
+build/
+.npm
+.eslintcache
+*.log
+
+# =========================
+# BACKEND (Python / FastAPI)
+# =========================
+__pycache__/
+*.py[cod]
+*$py.class
+venv/
+env/
+.venv/
+alembic.ini
+*.sqlite3
+
+# =========================
+# SISTEMA OPERATIVO Y EDITORES
+# =========================
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
