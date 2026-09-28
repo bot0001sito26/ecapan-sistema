@@ -1,5 +1,8 @@
 import { useState } from 'react';
 
+
+const API_URL = 'https://ecapan-backend.onrender.com';
+
 export default function ConsultaPlanillas() {
     const [cedula, setCedula] = useState('');
     const [cargando, setCargando] = useState(false);
@@ -21,7 +24,7 @@ export default function ConsultaPlanillas() {
         setPagoCompletado(false);
 
         try {
-            const response = await fetch('http://127.0.0.1:8000/api/consultar-deuda', {
+            const response = await fetch(`${API_URL}/api/consultar-deuda`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ cedula })
@@ -91,7 +94,7 @@ export default function ConsultaPlanillas() {
 
         try {
             const numeroLimpio = tarjeta.numero.replace(/\D/g, '');
-            const response = await fetch('http://127.0.0.1:8000/api/procesar-pago', {
+            const response = await fetch(`${API_URL}/api/procesar-pago`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({

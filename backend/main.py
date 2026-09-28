@@ -88,6 +88,8 @@ def consultar_deuda(consulta: Consulta):
                     "total_adeudado": round(total, 2)
                 }
     except Exception as e:
+        # Esto saldrá en los logs de Render
+        print(f"ERROR CRITICO EN ORACLE: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
 
